@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 
 namespace Maze
 {
@@ -8,19 +9,22 @@ namespace Maze
         {
             Console.Clear();
 
+            Console.WriteLine("Разработал: Давыдов Богдан Максимович \nСтудент группы: 106-Д9-2ИСП \nДата выполнения: 17.02.2026 \n");
+            Console.WriteLine("Программа для решения задача - Лабиринт\n");
+
             Console.WriteLine("Выберите вариант генерации лабиринта: \n");
             Console.WriteLine("(1) - Стандартный");
-            Console.WriteLine("(2) - Рандомный\n");
 
             int step = Convert.ToInt32(Console.ReadLine());
 
             switch (step)
             {
                 case 1:
-                    StandartMaze();
+                    GetStandartMaze();
+                    GetOptimalWay();
                     break;
                 case 2:
-                    RandomMaze();
+                    Main();
                     break;
                 default:
                     Main();
@@ -28,130 +32,121 @@ namespace Maze
             }
         }
 
-        static void StandartMaze()
-        {
-            Console.Clear();
+        static int StandartX = 1;
+        static int StandartY = 10;
+        static int StandartTargetX = 10;
+        static int StandartTargetY = 8;
 
-            char[,] maze = 
+        static char[,] StandartMaze =
             {
                 { '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#' },
                 { '#', ' ', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ' },
                 { '#', '#', ' ', '#', ' ', '#', ' ', '#', ' ', '#', '#' },
                 { '#', ' ', ' ', '#', ' ', '#', '#', '#', ' ', '#', '#' },
                 { '#', '#', ' ', '#', ' ', '#', ' ', ' ', ' ', ' ', '#' },
-                { '#', '#', ' ', '#', ' ', ' ', ' ', '#', '#', '#', '#' },
-                { '#', '#', ' ', '#', '#', '#', '#', '#', '#', '#', '#' },
-                { '#', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#' },
+                { '#', '#', ' ', '#', ' ', ' ', ' ', '#', ' ', '#', '#' },
+                { '#', '#', ' ', '#', '#', '#', '#', '#', ' ', '#', '#' },
+                { '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#' },
                 { '#', ' ', ' ', '#', ' ', '#', '#', '#', ' ', '#', '#' },
                 { '#', '#', '#', '#', ' ', ' ', ' ', ' ', ' ', ' ', '#' },
                 { '#', ' ', ' ', ' ', '#', '#', '#', '#', ' ', '#', '#' }
             };
 
-            Console.WriteLine("Ваш лабиринт: \n");
-            PrintMaze(maze);
+        static int counter = 0;
+        static int steps = 0;
+        static List<int> stepsArr = new List<int>();
 
-            int x = 10;
-            int y = 1;
-            int targetX = 8;
-            int targetY = 10;
-
-            Go(maze, x, y, targetX, targetY);
-        }
-
-        static void RandomMaze()
+        static void GetStandartMaze()
         {
             Console.Clear();
 
-            int width = 11;
-            int height = 11;
+            Console.WriteLine(" Ваш лабиринт: \n");
+            PrintMaze(StandartMaze);
 
-            Random rnd = new Random();
-            char[,] maze = new char[height, width];
-
-            for (int i = 0; i < height; i++)
-                for (int j = 0; j < width; j++)
-                    maze[i, j] = '#';
-
-            Cut(maze, 1, 1, height, width, rnd);
-
-            int y = 1;
-            int x = 0;
-            maze[y, x] = ' ';
-
-            int targetY = height - 2;
-            int targetX = width - 1;
-            maze[targetY, targetX] = ' ';
-
-            Console.WriteLine("Ваш лабиринт: \n");
-            PrintMaze(maze);
-
-            Go(maze, x, y, targetX, targetY);
-        }
-
-        static void Cut(char[,] maze, int y, int x, int height, int width, Random rnd)
-        {
-            maze[y, x] = ' ';
-
-            var directions = new (int dy, int dx)[]
-            {
-            (0, 2), (0, -2), (2, 0), (-2, 0)
-            };
-
-            for (int i = directions.Length - 1; i > 0; i--)
-            {
-                int j = rnd.Next(i + 1);
-                (directions[i], directions[j]) = (directions[j], directions[i]);
-            }
-
-            foreach (var (dy, dx) in directions)
-            {
-                int ny = y + dy;
-                int nx = x + dx;
-
-                if (ny > 0 && ny < height - 1 &&
-                    nx > 0 && nx < width - 1 &&
-                    maze[ny, nx] == '#')
-                {
-                    maze[y + dy / 2, x + dx / 2] = ' ';
-                    Cut(maze, ny, nx, height, width, rnd);
-                }
-            }
+            Go(StandartMaze, StandartX, StandartY, StandartTargetX, StandartTargetY);
         }
 
         static void Go(char[,] maze, int x, int y, int targetX, int targetY)
         {
-            if (x < 0 || y >= 11 || y < 0 || x >= 11) return;
+            if (x < 0 || x >= 11 || y < 0 || y >= 11) return;
 
-            if (maze[y, x] == ' ')
+            if (maze[x, y] == ' ')
             {
-                maze[y, x] = '.';
+                maze[x, y] = '.';
 
                 if (x == targetX && y == targetY)
+                {   
+                    counter++;
+                    steps = CountDotes(maze);
+                    stepsArr.Add(steps);
+                    Console.WriteLine($" Найден путь №{counter}");
+                    Console.WriteLine($" Кол-во шагов: {steps}\n");
+                    
+                    char[,] copyMaze = (char[,])maze.Clone();
+                    PrintMaze(copyMaze);
+                    Console.WriteLine();
+                } else
                 {
-                    Console.WriteLine("Найден путь: \n");
-                    PrintMaze(maze);
-                    return;
+                    char[,] copyMaze = (char[,])maze.Clone();
+                    Go(copyMaze, x + 1, y, targetX, targetY); // вправо
+                    Go(copyMaze, x - 1, y, targetX, targetY); // влево
+                    Go(copyMaze, x, y + 1, targetX, targetY); // вниз
+                    Go(copyMaze, x, y - 1, targetX, targetY); // вверх
                 }
 
-                Go(maze, x + 1, y, targetX, targetY); // вправо
-                Go(maze, x - 1, y, targetX, targetY); // влево
-                Go(maze, x, y + 1, targetX, targetY); // вниз
-                Go(maze, x, y - 1, targetX, targetY); // вверх
+                maze[x, y] = ' ';
             }
         }
 
-        static void PrintMaze(char[,] maze)
+        static int CountDotes(char[,] maze)
         {
+            int count = 0;
             for (int i = 0; i < maze.GetLength(0); i++)
             {
                 for (int j = 0; j < maze.GetLength(1); j++)
                 {
-                    Console.Write($"{maze[i, j],3}");
+                    if (maze[i, j] == '.') count++;
                 }
-                Console.WriteLine("\n");
             }
-            ;
+            return count;
+        }
+
+        static void PrintMaze(char[,] maze)
+        {
+            
+                for (int i = 0; i < maze.GetLength(0); i++)
+                {
+                    for (int j = 0; j < maze.GetLength(1); j++)
+                    {
+                        Console.Write($"{maze[i, j],3}");
+                    }
+                    Console.WriteLine("\n");
+                }
+            
+        }
+
+        static void GetOptimalWay()
+        {
+            Console.WriteLine(" Итог по шагам: \n");
+            int countSteps = 0;
+            for (int i = 0; i < stepsArr.Count;  i++)
+            {
+                countSteps += 1;
+                Console.Write($" Путь {countSteps} - Кол-во шагов - {stepsArr[i]}\n");
+            }
+
+            stepsArr.Sort();
+
+            countSteps = 0;
+            for (int i = 0;i < stepsArr.Count; i++)
+            {
+                if (stepsArr[i] < stepsArr[stepsArr.Count - 1])
+                {
+                    countSteps += 1;
+                    Console.WriteLine($"\n Путь {countSteps} самый оптимальный!\n");
+                    break;
+                }
+            }
         }
     }
 }
-
