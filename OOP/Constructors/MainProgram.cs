@@ -1,10 +1,12 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Constructor
 {
     internal class MainProgram
     {
+        static List<Pupil> list = new List<Pupil> ();
 
         static void Main()
         {
@@ -13,10 +15,23 @@ namespace Constructor
             {
                 Console.Clear();
 
-                ConsoleHelper.PrintCentered("Только Имя и Фамилия - (1)");
-                ConsoleHelper.PrintCentered("Полная информация о ученике - (2)");
+                ConsoleHelper.PrintCentered("Вести только имя и фамилию ученика - (1)");
+                ConsoleHelper.PrintCentered("Вести полную информацию об ученике - (2)");
                 ConsoleHelper.PrintCentered("Выход из программы - (3)\n");
-                ConsoleHelper.PrintCentered("Выберите способ создания ученика");
+                ConsoleHelper.PrintCentered("Выберите способ создания ученика, нажав клавишу на клавиатуре!\n");
+
+                if (list.Count != 0)
+                {
+                    Console.WriteLine();
+                    ConsoleHelper.PrintCentered("Список учеников:\n");
+                    ConsoleHelper.PrintCentered("Имя | Фамилия | Класс (1-11) | Средний балл (2-5) | Пропуски (0-15)\n");
+                    
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        ConsoleHelper.PrintCenteredColored(list[i].Name, list[i].Surname, list[i].Grade, list[i].Average, list[i].Passes);
+                    }
+                    Console.WriteLine();
+                }
 
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
@@ -38,7 +53,7 @@ namespace Constructor
                         continue;
                 }
             }
-            
+
         }
 
         static Pupil MakePupilByNameNSurname()
@@ -87,8 +102,9 @@ namespace Constructor
                 ConsoleHelper.PrintCentered("Изменить данные - (2)");
                 ConsoleHelper.PrintCentered("Выполнить обработку данных - (3)");
                 ConsoleHelper.PrintCentered("Проверить порог по пропускам - (4)");
-                ConsoleHelper.PrintCentered("Вернуться назад, не сохраняя - (5)\n");
-                ConsoleHelper.PrintCentered("Выберите способ взаимодействия с учеником");
+                ConsoleHelper.PrintCentered("Вернуться назад, НЕ сохраняя данные - (5)");
+                ConsoleHelper.PrintCentered("Вернуться назад, СОХРАНЯЯ данные - (6)\n");
+                ConsoleHelper.PrintCentered("Выберите способ взаимодействия с учеником, нажав клавишу на клавиатуре!");
 
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
@@ -109,6 +125,10 @@ namespace Constructor
                     case ConsoleKey.D5:
                         exit = true;
                         break;
+                    case ConsoleKey.D6:
+                        list.Add(pupil);
+                        exit = true;
+                        break;
                     default:
                         Console.WriteLine();
                         ConsoleHelper.PrintCentered("Неверный способ!");
@@ -125,32 +145,38 @@ namespace Constructor
             {
                 Console.Clear();
 
+                ConsoleHelper.PrintCentered($"Имя - {pupil.Name}");
+                ConsoleHelper.PrintCentered($"Фамилия - {pupil.Surname}");
+                ConsoleHelper.PrintCentered($"Класс - {pupil.Grade}");
+                ConsoleHelper.PrintCentered($"Средний балл - {pupil.Average}");
+                ConsoleHelper.PrintCentered($"Пропуски - {pupil.Passes}\n");
+
                 ConsoleHelper.PrintCentered("Имя ученика - (1)");
                 ConsoleHelper.PrintCentered("Фамилия ученика - (2)");
                 ConsoleHelper.PrintCentered("Класс ученика - (3)");
                 ConsoleHelper.PrintCentered("Средний балл ученика - (4)");
                 ConsoleHelper.PrintCentered("Пропуски ученика - (5)");
                 ConsoleHelper.PrintCentered("Назад - (6)\n");
-                ConsoleHelper.PrintCentered("Выберите то, что вы хотите изменить");
+                ConsoleHelper.PrintCentered("Выберите то, что вы хотите изменить, нажав клавишу на клавиатуре!");
 
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.D1:
-                        ChangeDataHelper(pupil, 1);
+                        ChangeDataHelper(pupil, 1, "Имя");
                         continue;
                     case ConsoleKey.D2:
-                        ChangeDataHelper(pupil, 2);
+                        ChangeDataHelper(pupil, 2, "Фамилия");
                         continue;
                     case ConsoleKey.D3:
-                        ChangeDataHelper(pupil, 3);
+                        ChangeDataHelper(pupil, 3, "Класс ученика");
                         break;
                     case ConsoleKey.D4:
-                        ChangeDataHelper(pupil, 4);
+                        ChangeDataHelper(pupil, 4, "Средний балл ученика");
                         continue;
                     case ConsoleKey.D5:
-                        ChangeDataHelper(pupil, 5);
+                        ChangeDataHelper(pupil, 5, "Пропуски ученика");
                         break;
                     case ConsoleKey.D6:
                         exit = true;
@@ -164,12 +190,12 @@ namespace Constructor
             }
         }
 
-        static void ChangeDataHelper(Pupil pupil, int num)
+        static void ChangeDataHelper(Pupil pupil, int num, string nameData)
         {
             Console.Clear();
 
-            ConsoleHelper.PrintCentered("Изменить данные?");
-            ConsoleHelper.PrintCentered("( да - 1 | нет - 2 )");
+            ConsoleHelper.PrintCentered($"Изменить данные - {nameData}?");
+            ConsoleHelper.PrintCentered("Нажмите | да - 1 | нет - 2");
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
@@ -179,42 +205,34 @@ namespace Constructor
                 {
                     case 1:
                         Console.Clear();
-                        Console.Write("Введите новое имя - ");
-                        string name = Console.ReadLine();
-                        pupil.Name = name;
+                        pupil.Name = ConsoleHelper.ReadString("Введите новое имя: "); ;
                         break;
                     case 2:
                         Console.Clear();
-                        Console.Write("Введите новую фамилию - ");
-                        string surname = Console.ReadLine();
-                        pupil.Surname = surname;
+                        pupil.Surname = ConsoleHelper.ReadString("Введите новую фамилию: ");
                         break;
                     case 3:
                         Console.Clear();
-                        Console.Write("Введите новый класс - ");
-                        int grade = int.Parse(Console.ReadLine());
-                        pupil.Grade = grade;
+                        pupil.Grade = ConsoleHelper.ReadInt("Введите новый класс (1-11): ", 1, 11);
                         break;
                     case 4:
                         Console.Clear();
-                        Console.Write("Введите новое имя - ");
-                        double average = double.Parse(Console.ReadLine());
-                        pupil.Average = average;
+                        pupil.Average = ConsoleHelper.ReadDouble("Введите новый средний балл (2-5): ", 2.0, 5.0);
                         break;
                     case 5:
                         Console.Clear();
-                        Console.Write("Введите новое имя - ");
-                        int passes = int.Parse(Console.ReadLine());
-                        pupil.Passes = passes;
+                        pupil.Passes = ConsoleHelper.ReadInt("Введите новое значение пропусков (>=0): ", 0, 50);
                         break;
                 }
 
                 Console.Clear();
-                ConsoleHelper.PrintCentered("Данные сохранены!");
+                ConsoleHelper.PrintCentered("Данные сохранены! Подождите!");
                 Thread.Sleep(1500);
-            } else
+            }
+            else
             {
-                ConsoleHelper.PrintCentered("Данные сохранены!");
+                Console.Clear();
+                ConsoleHelper.PrintCentered("Данные не были тронуты! Подождите!");
                 Thread.Sleep(1500);
             }
         }
