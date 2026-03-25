@@ -1,11 +1,46 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace Constructor
 {
     internal class ConsoleHelper
     {
-        public static void PrintCentered(string text) 
+        public static void PrintCenteredColored(string name, string surname, int grade, double average, int passes)
+        {
+            string baseText = $"{name} | {surname} | {grade} | {average:F1} | {passes}";
+            int totalWidth = Console.WindowWidth;
+            int leftPadding = (totalWidth - baseText.Length) / 2;
+            if (leftPadding < 0) leftPadding = 0;
+
+            Console.Write(new string(' ', leftPadding));
+
+            Console.Write($"{name} | {surname} | {grade} | ");
+
+            if (average <= 3.49)
+                Console.ForegroundColor = ConsoleColor.Red;
+            else if (average <= 4.49)
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            else
+                Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.Write($"{average:F1}");
+            Console.ResetColor();
+
+            Console.Write(" | ");
+            if (passes >= 15)
+                Console.ForegroundColor = ConsoleColor.Red;
+            else if (passes >= 6 && passes <= 10)
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            else
+                Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.Write($"{passes}");
+            Console.ResetColor();
+
+            Console.WriteLine();
+        }
+
+        public static void PrintCentered(string text)
         {
             int leftPadding = (Console.WindowWidth - text.Length) / 2;
 
@@ -97,7 +132,7 @@ namespace Constructor
                 {
                     Console.Clear();
                     PrintCentered("Ошибка! Пустая строка.");
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1500);
                     Console.Clear();
                     continue;
                 }
@@ -106,7 +141,49 @@ namespace Constructor
                 {
                     Console.Clear();
                     PrintCentered("Ошибка! Введите текст, а не число.");
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1500);
+                    Console.Clear();
+                    continue;
+                }
+
+                bool hasDigit = false;
+                for (int i = 0; i < input.Length; i++)
+                {
+                    if (char.IsDigit(input[i]))
+                    {
+                        hasDigit = true;
+                        break;
+                    }
+                }
+
+                if (hasDigit)
+                {
+                    Console.Clear();
+                    PrintCentered("Ошибка! В тексте недопустимо число.");
+                    Thread.Sleep(1500);
+                    Console.Clear();
+                    continue;
+                }
+
+                bool hasInvalidChar = false;
+                for (int i = 0; i < input.Length; i++)
+                {
+                    char c = input[i];
+                    if (
+                    !((c >= 'А' && c <= 'Я') ||
+                    (c >= 'а' && c <= 'я') || 
+                    c == 'Ё' || c == 'ё' || c == '-'))
+                    {
+                        hasInvalidChar = true;
+                        break;
+                    }
+                }
+
+                if (hasInvalidChar)
+                {
+                    Console.Clear();
+                    PrintCentered("Ошибка! В тексте допустимы только русские буквы.");
+                    Thread.Sleep(1500);
                     Console.Clear();
                     continue;
                 }
