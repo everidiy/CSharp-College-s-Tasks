@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Constructor
 {
@@ -77,7 +77,8 @@ namespace Constructor
             {
                 ConsoleHelper.PrintCentered($"Ученик является хорошистом!");
                 ConsoleHelper.PrintCentered($"Средний балл - {Average}\n");
-            } else
+            }
+            else
             {
                 ConsoleHelper.PrintCentered($"Ученик является отличником!");
                 ConsoleHelper.PrintCentered($"Средний балл - {Average}\n");
