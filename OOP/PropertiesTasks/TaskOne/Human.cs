@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace TaskOneProperties
 {
@@ -13,12 +9,12 @@ namespace TaskOneProperties
 
         public void GetHumanInfo()
         {
-            Console.WriteLine($"Name: {Name} Age: {Age}");
+            Console.WriteLine($"Имя: {Name} Возраст: {Age}");
         }
 
         public override string ToString()
         {
-            return $"Name: {Name} Age: {Age}";
+            return $"Имя: {Name} Возраст: {Age}";
         }
     }
 }
