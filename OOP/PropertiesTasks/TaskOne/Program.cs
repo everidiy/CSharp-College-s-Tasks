@@ -1,10 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace TaskOneProperties
 {
@@ -14,26 +10,27 @@ namespace TaskOneProperties
 
         static void Main()
         {
-            Console.Clear();
-
-            Console.WriteLine("Do you want to see info about people? (yes/no)");
-            string answer = Console.ReadLine();
-            Console.WriteLine();
-
-            switch (answer.ToLower())
+            while (true)
             {
-                case "yes":
+                Console.Clear();
+                Console.WriteLine("Хотите ли вы увидеть информацию о людях? (да/нет)");
+                string answer = Console.ReadLine().ToLower();
+
+                if (answer == "да")
+                {
                     GetData();
                     break;
-                case "no":
+                }
+                else if (answer == "нет")
+                {
                     Environment.Exit(0);
-                    break;
-                default:
+                }
+                else
+                {
                     Console.Clear();
-                    Console.WriteLine("Wrong choise!");
+                    Console.WriteLine("Неправильный выбор!");
                     Thread.Sleep(1000);
-                    Main();
-                    break;
+                }
             }
         }
 
@@ -46,17 +43,17 @@ namespace TaskOneProperties
                 Console.WriteLine($"{i + 1} - {list[i]}");
             }
             Console.WriteLine();
-            Console.WriteLine("Add new person - (1)");
-            Console.WriteLine("Exit - (2)\n");
+            Console.WriteLine("Добавить нового человека - (1)");
+            Console.WriteLine("Выход - (2)\n");
 
-            Console.Write("Your choise => ");
+            Console.Write("Ваш выбор => ");
             int.TryParse(Console.ReadLine(), out int value);
 
             switch (value)
             {
                 case 1:
                     AddNewPerson();
-                    Console.Write("\nEnter different button to go to back :) ");
+                    Console.Write("\nНажмите любую кнопку, чтобы вернуться обратно :) ");
                     Console.ReadKey();
                     GetData();
                     break;
@@ -65,7 +62,7 @@ namespace TaskOneProperties
                     break;
                 default:
                     Console.Clear();
-                    Console.WriteLine("Wrong choise!");
+                    Console.WriteLine("Неправильный выбор!");
                     Thread.Sleep(1000);
                     GetData();
                     break;
@@ -76,17 +73,17 @@ namespace TaskOneProperties
         {
             Console.Clear();
 
-            Console.Write("Enter your name: ");
-            string nameInput = Console.ReadLine();
+            string nameInput = ConsoleHelper.ReadString("Введите имя: ");
             Console.WriteLine();
 
-            Console.Write("Enter your age: ");
-            int.TryParse(Console.ReadLine(), out int ageInpit);
+            int ageInpit = ConsoleHelper.ReadInt("Введите возраст: ", 1, 100);
             Console.WriteLine();
 
-            Human person = new Human();
-            person.Name = nameInput;
-            person.Age = ageInpit;
+            Human person = new Human
+            {
+                Name = nameInput,
+                Age = ageInpit
+            };
 
             list.Add(person);
 
