@@ -14,8 +14,6 @@ namespace Constructor
             while (!exit)
             {
                 Console.Clear();
-
-                Console.WriteLine("Выполнил: Давыдов Богдан Максимович \n Группа: 106-Д9-2ИСП \n Дата: 26.03.2026 \n Задача: Конструкторы");
                 
                 ConsoleHelper.PrintCentered("Вести только имя и фамилию ученика - (1)");
                 ConsoleHelper.PrintCentered("Вести полную информацию об ученике - (2)");
